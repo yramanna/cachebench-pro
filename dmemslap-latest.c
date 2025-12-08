@@ -280,12 +280,12 @@ port_init(uint8_t port, struct rte_mempool *mbuf_pool, unsigned int n_queues)
 
   /* Configure RSS indirection table to distribute flows across queues */
   if (dev_info.reta_size > 0 && n_queues > 1) {
-    struct rte_eth_rss_reta_entry64 reta_conf[512 / RTE_RETA_GROUP_SIZE];
+    struct rte_eth_rss_reta_entry64 reta_conf[512 / RTE_ETH_RETA_GROUP_SIZE];
     memset(reta_conf, 0, sizeof(reta_conf));
     
     for (uint16_t i = 0; i < dev_info.reta_size; i++) {
-      uint16_t idx = i / RTE_RETA_GROUP_SIZE;
-      uint16_t shift = i % RTE_RETA_GROUP_SIZE;
+      uint16_t idx = i / RTE_ETH_RETA_GROUP_SIZE;
+      uint16_t shift = i % RTE_ETH_RETA_GROUP_SIZE;
       reta_conf[idx].mask |= (1ULL << shift);
       reta_conf[idx].reta[shift] = i % n_queues;
     }
