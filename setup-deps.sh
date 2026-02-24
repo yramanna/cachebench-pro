@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
+
 echo "==> Installing build tools (meson, ninja, pkg-config, pip)..."
-sudo apt install -y meson ninja-build pkg-config python3-pip
+sudo apt update
+sudo apt install -y meson ninja-build pkg-config python3-pip build-essential cmake git
 
 echo "==> Installing pyelftools..."
 pip install pyelftools
 
 echo "==> Updating apt and installing RDMA/DPDK dependencies..."
-sudo apt-get update
 sudo apt-get install -y \
   rdma-core ibverbs-providers \
   libibverbs-dev librdmacm-dev libmlx5-1 \
@@ -36,6 +37,16 @@ make -C client
 make -C server
 sudo sysctl -w vm.nr_hugepages=1024
 cd ~
+
+echo "==> Cloning and building HdrHistogram_c..."
+cd ~
+git clone https://github.com/HdrHistogram/HdrHistogram_c.git
+cd HdrHistogram_c
+mkdir build && cd build
+cmake ..
+make
+sudo make install
+sudo ldconfig
 
 echo "==> Cloning and building smartkv/dmemslap..."
 git clone git@github.com:utah-scs/smartkv.git
